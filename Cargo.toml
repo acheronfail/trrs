@@ -1,0 +1,22 @@
+[package]
+name = "trrs"
+version = "0.1.0"
+edition = "2021"
+license = "Unlicense OR MIT OR Apache-2.0"
+homepage = "https://github.com/acheronfail/trrs"
+repository = "https://github.com/acheronfail/trrs"
+description = "A simple command line tool to convert between common encodings"
+authors = ["Callum Oz <acheronfail@gmail.com>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.56"
+base32 = "0.4.0"
+base64 = "0.13.0"
+bat = { version = "0.20.0", features = ["regex-fancy"] }
+clap = { version = "3.0.0", features = ["cargo", "derive"] }
+hex = "0.4.3"
+
+[dev-dependencies]
+assert_cmd = "2.0.4"
