@@ -36,12 +36,10 @@ cat ascii
 Tips
 
 ```bash
-# A shorthand exists to convert STDIN between encodings.
+# A shorthand exists to convert between encodings without using --in-type and --out-type.
 
 # This means that this:
 echo -n 'hello world' | trrs ascii base64
 # is equivalent to this:
-echo -n 'hello world' | trrs        --in-type ascii         --out-type base64
-# and even this:
-echo -n 'hello world' | trrs --in - --in-type ascii --out - --out-type base64
+echo -n 'hello world' | trrs --in-type ascii --out-type base64
 ```
