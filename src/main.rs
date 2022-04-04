@@ -159,11 +159,51 @@ mod tests {
             (Encoding::ASCII, v.clone()),
             (Encoding::UTF8, v.clone()),
             (
-                Encoding::Base32,
+                Encoding::Base32Crockford,
+                base32::encode(base32::Alphabet::Crockford, &v.clone()).into_bytes(),
+            ),
+            (
+                Encoding::Base32Rfc4648,
                 base32::encode(base32::Alphabet::RFC4648 { padding: true }, &v.clone())
                     .into_bytes(),
             ),
-            (Encoding::Base64, base64::encode(v.clone()).into_bytes()),
+            (
+                Encoding::Base32Rfc4648NoPadding,
+                base32::encode(base32::Alphabet::RFC4648 { padding: false }, &v.clone())
+                    .into_bytes(),
+            ),
+            (
+                Encoding::Base64Bcrypt,
+                base64::encode_config(v.clone(), base64::BCRYPT).into_bytes(),
+            ),
+            (
+                Encoding::Base64Binhex,
+                base64::encode_config(v.clone(), base64::BINHEX).into_bytes(),
+            ),
+            (
+                Encoding::Base64Crypt,
+                base64::encode_config(v.clone(), base64::CRYPT).into_bytes(),
+            ),
+            (
+                Encoding::Base64ImapMutf7,
+                base64::encode_config(v.clone(), base64::IMAP_MUTF7).into_bytes(),
+            ),
+            (
+                Encoding::Base64Standard,
+                base64::encode_config(v.clone(), base64::STANDARD).into_bytes(),
+            ),
+            (
+                Encoding::Base64StandardNoPadding,
+                base64::encode_config(v.clone(), base64::STANDARD_NO_PAD).into_bytes(),
+            ),
+            (
+                Encoding::Base64UrlSafe,
+                base64::encode_config(v.clone(), base64::URL_SAFE).into_bytes(),
+            ),
+            (
+                Encoding::Base64UrlSafeNoPadding,
+                base64::encode_config(v.clone(), base64::URL_SAFE_NO_PAD).into_bytes(),
+            ),
             (Encoding::Hex, hex::encode(v.clone()).into_bytes()),
         ];
 
