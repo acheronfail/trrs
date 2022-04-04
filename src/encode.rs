@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Result, bail};
 
 use crate::cli::Encoding;
 
@@ -8,7 +8,7 @@ pub fn encode(enc: &Encoding, data: Vec<u8>) -> Result<Vec<u8>> {
         Encoding::ASCII => {
             let s = String::from_utf8(data)?;
             if !s.is_ascii() {
-                todo!("error here FIXME")
+                bail!("Data contains non-ASCII bytes, and therefore cannot be encoded as ASCII");
             }
 
             s.into_bytes()

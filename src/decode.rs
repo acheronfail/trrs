@@ -16,11 +16,11 @@ pub fn decode(enc: &Encoding, data: impl AsRef<[u8]>) -> Result<Vec<u8>> {
     Ok(match enc {
         Encoding::Raw => data.to_owned(),
         Encoding::ASCII => {
-            if data.is_ascii() {
-                data.to_owned()
-            } else {
-                todo!("error here FIXME")
+            if !data.is_ascii() {
+                bail!("Input data contains non-ASCII bytes, and therefore cannot be decoded as ASCII");
             }
+
+            data.to_owned()
         }
         Encoding::UTF8 => data.to_owned(),
         Encoding::Hex => hex::decode(&data)?,

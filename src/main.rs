@@ -9,9 +9,6 @@ use anyhow::{bail, Result};
 use clap::Parser;
 use cli::{Args, OutputFormat};
 
-// TODO: use `cargo-fuzz` as a good test
-//  see: https://github.com/marshallpierce/rust-base64/blob/master/fuzz/fuzzers/roundtrip.rs
-
 fn main() -> Result<()> {
     //
     // Args
