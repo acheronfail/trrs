@@ -3,29 +3,27 @@ use std::str::FromStr;
 use clap::{crate_authors, crate_description, crate_version, Parser};
 
 // TODO: rot13 & rotN
-#[derive(Debug, Parser, PartialEq, Eq)]
+// TODO: base32 & base64 with different alphabets
+#[derive(Debug, PartialEq, Eq)]
 pub enum Encoding {
     Raw,
     ASCII,
     UTF8,
     Base32,
     Base64,
-    // TODO: https://github.com/clap-rs/clap/discussions/3599
-    // BaseCustom(String),
     Hex,
 }
 
 impl ToString for Encoding {
     fn to_string(&self) -> String {
-        (match self {
-            Self::Raw => "raw",
-            Self::ASCII => "ascii",
-            Self::UTF8 => "utf8",
-            Self::Base32 => "base32",
-            Self::Base64 => "base64",
-            Self::Hex => "hex",
-        })
-        .to_string()
+        match self {
+            Self::Raw => "raw".into(),
+            Self::ASCII => "ascii".into(),
+            Self::UTF8 => "utf8".into(),
+            Self::Base32 => "base32".into(),
+            Self::Base64 => "base64".into(),
+            Self::Hex => "hex".into(),
+        }
     }
 }
 
@@ -39,7 +37,6 @@ impl FromStr for Encoding {
             "hex" => Ok(Self::Hex),
             "base32" => Ok(Self::Base32),
             "base64" => Ok(Self::Base64),
-            // _ if s.starts_with("base:") => Ok(Self::BaseCustom(s.chars().skip(5).collect())),
             _ => Err(format!("Unknown encoding: {}", s)),
         }
     }

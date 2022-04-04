@@ -5,12 +5,14 @@ mod encode;
 use std::fs::OpenOptions;
 use std::io::{self, Read, Write};
 
+use anyhow::{bail, Result};
 use clap::Parser;
 use cli::{Args, OutputFormat};
 
-// TODO: nicely formatted error handling for the user with anyhow
+// TODO: use `cargo-fuzz` as a good test
+//  see: https://github.com/marshallpierce/rust-base64/blob/master/fuzz/fuzzers/roundtrip.rs
 
-fn main() {
+fn main() -> Result<()> {
     //
     // Args
     //
@@ -38,22 +40,24 @@ fn main() {
         "-" => {
             let stdin = io::stdin();
             let mut stdin_data = vec![];
-            stdin
-                .lock()
-                .read_to_end(&mut stdin_data)
-                .expect("Failed to read from STDIN");
+            if let Err(e) = stdin.lock().read_to_end(&mut stdin_data) {
+                bail!("Failed to read from STDIN: {}", e);
+            }
 
             stdin_data
         }
         // Read from file
         _ => {
             let mut data = vec![];
-            OpenOptions::new()
-                .read(true)
-                .open(&args.input)
-                .expect(&format!("Failed to open file {}", &args.input))
-                .read_to_end(&mut data)
-                .expect(&format!("Failed to read file {}", &args.input));
+            match OpenOptions::new().read(true).open(&args.input) {
+                Ok(mut file) => {
+                    if let Err(e) = file.read_to_end(&mut data) {
+                        bail!("Failed to open file: {}", e);
+                    }
+                }
+                Err(e) => bail!("Failed to open file: {}", e),
+            }
+
             data
         }
     };
@@ -62,8 +66,8 @@ fn main() {
     // Transform
     //
 
-    let data = decode::decode(input_enc, input);
-    let output = encode::encode(output_enc, data);
+    let data = decode::decode(input_enc, input)?;
+    let output = encode::encode(output_enc, data)?;
 
     //
     // Output
@@ -72,12 +76,13 @@ fn main() {
     match args.output.as_str() {
         // Print to stdout
         "-" => match args.output_format {
-            None | Some(OutputFormat::Raw) => io::stdout()
-                .lock()
-                .write_all(&output)
-                .expect("Failed to write to STDOUT"),
+            None | Some(OutputFormat::Raw) => {
+                if let Err(e) = io::stdout().lock().write_all(&output) {
+                    bail!("Failed to write to STDOUT: {}", e)
+                }
+            }
             Some(OutputFormat::Safe) => {
-                // TODO: use this instead if https://github.com/sharkdp/bat/pull/2142 is merged
+                // TODO: use this instead when https://github.com/sharkdp/bat/pull/2142 is released
                 // bat::PrettyPrinter::new()
                 //     .input_from_bytes(&output)
                 //     .show_nonprintable(true)
@@ -89,21 +94,30 @@ fn main() {
                 let assets = bat::assets::HighlightingAssets::from_binary();
                 let bat = bat::controller::Controller::new(&config, &assets);
                 let input = vec![bat::input::Input::from(bat::Input::from_bytes(&output))];
-                bat.run(input).expect("Failed to print to STDOUT");
+                if let Err(e) = bat.run(input) {
+                    bail!("Failed to print to STDOUT: {}", e);
+                }
             }
         },
         // Write to file
         _ => {
-            OpenOptions::new()
+            match OpenOptions::new()
                 .truncate(true)
                 .create(true)
                 .write(true)
                 .open(&args.output)
-                .expect(&format!("Failed to create file {}", &args.output))
-                .write_all(&output)
-                .expect(&format!("Failed to write file {}", &args.output));
+            {
+                Ok(mut file) => {
+                    if let Err(e) = file.write_all(&output) {
+                        bail!("Failed to write file: {}", e)
+                    }
+                }
+                Err(e) => bail!("Failed to create file: {}", e),
+            }
         }
     }
+
+    Ok(())
 }
 
 #[cfg(test)]
@@ -114,6 +128,12 @@ mod tests {
 
     fn cmd() -> Command {
         Command::cargo_bin(env!("CARGO_PKG_NAME")).unwrap()
+    }
+
+    #[test]
+    #[ignore]
+    fn error_conditions() {
+        todo!()
     }
 
     #[test]
