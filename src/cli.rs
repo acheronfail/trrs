@@ -5,6 +5,7 @@ use strum::EnumIter;
 
 // TODO: rot13 & rotN
 // TODO: binary, octal
+// TODO: utf16le, ucs2, ucs-2, latin1
 #[derive(Debug, ArgEnum, EnumIter, Clone, PartialEq, Eq)]
 pub enum Encoding {
     Raw,
@@ -37,6 +38,11 @@ pub enum Encoding {
     Base64Crypt,
     #[clap(name("base64:imap"))]
     Base64ImapMutf7,
+    // Base85
+    #[clap(name("base85"))]
+    Base85Rfc1924,
+    #[clap(name("ascii85"))]
+    Base85Ascii,
 }
 
 impl ToString for Encoding {
@@ -59,6 +65,9 @@ impl ToString for Encoding {
             Self::Base64StandardNoPadding => "base64|".into(),
             Self::Base64UrlSafe => "base64:url".into(),
             Self::Base64UrlSafeNoPadding => "base64:url|".into(),
+
+            Self::Base85Rfc1924 => "base85".into(),
+            Self::Base85Ascii => "ascii85".into(),
         }
     }
 }
@@ -88,6 +97,10 @@ impl FromStr for Encoding {
             "base64:standard|" => Ok(Self::Base64StandardNoPadding),
             "base64:url" => Ok(Self::Base64UrlSafe),
             "base64:url|" => Ok(Self::Base64UrlSafeNoPadding),
+
+            "base85" => Ok(Self::Base85Rfc1924),
+            "ascii85" => Ok(Self::Base85Ascii),
+
             _ => Err(format!("Unknown encoding: {}", s)),
         }
     }

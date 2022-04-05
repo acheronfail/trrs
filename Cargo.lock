@@ -42,6 +42,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4361135be9122e0870de935d7c439aef945b9f9ddd4199a553b5270b49c82a27"
 
 [[package]]
+name = "ascii85"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1f7b2cc50ccfca05cc3e99a014901ae232948108082a2eecebc3ab6544ebd938"
+
+[[package]]
 name = "assert_cmd"
 version = "2.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -83,6 +89,15 @@ name = "base64"
 version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "904dfeac50f3cdaba28fc6f57fdcddb75f49ed61346676a78c4ffe55877802fd"
+
+[[package]]
+name = "base85"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2e6835f89c0ffc5767d2e61551918e3c421a90c47d20f7c88195a2799fe37099"
+dependencies = [
+ "lazy_static",
+]
 
 [[package]]
 name = "bat"
@@ -1161,9 +1176,11 @@ name = "trrs"
 version = "0.2.1"
 dependencies = [
  "anyhow",
+ "ascii85",
  "assert_cmd",
  "base32",
  "base64",
+ "base85",
  "bat",
  "clap 3.1.7",
  "hex",

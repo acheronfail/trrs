@@ -1,4 +1,4 @@
-use anyhow::{Result, bail};
+use anyhow::{bail, Result};
 
 use crate::cli::Encoding;
 
@@ -38,6 +38,9 @@ pub fn encode(enc: &Encoding, data: Vec<u8>) -> Result<Vec<u8>> {
         Encoding::Base64UrlSafeNoPadding => {
             base64::encode_config(&data, base64::URL_SAFE_NO_PAD).into_bytes()
         }
+
+        Encoding::Base85Rfc1924 => base85::encode(&data).into_bytes(),
+        Encoding::Base85Ascii => ascii85::encode(&data).into_bytes(),
     })
 }
 
@@ -117,6 +120,13 @@ mod test {
                 "YWxseW91cmJhc2VhcmViZWxvbmd0b3VzIQ",
             );
         }
+
+        t(Encoding::Base85Rfc1924, s, "VQg%9Z*_8FVRL0+a%Ey=Y;SI7bZ>QY");
+        t(
+            Encoding::Base85Ascii,
+            s,
+            "<~@;Kb*Dfp)0@<6!gEb/]kCi=3(FDl;C~>",
+        );
 
         t(
             Encoding::Hex,

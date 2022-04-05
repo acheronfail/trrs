@@ -155,6 +155,7 @@ mod tests {
             (Encoding::Raw, v.clone()),
             (Encoding::ASCII, v.clone()),
             (Encoding::UTF8, v.clone()),
+            (Encoding::Hex, hex::encode(v.clone()).into_bytes()),
             (
                 Encoding::Base32Crockford,
                 base32::encode(base32::Alphabet::Crockford, &v.clone()).into_bytes(),
@@ -201,7 +202,8 @@ mod tests {
                 Encoding::Base64UrlSafeNoPadding,
                 base64::encode_config(v.clone(), base64::URL_SAFE_NO_PAD).into_bytes(),
             ),
-            (Encoding::Hex, hex::encode(v.clone()).into_bytes()),
+            (Encoding::Base85Rfc1924, base85::encode(&v).into_bytes()),
+            (Encoding::Base85Ascii, ascii85::encode(&v).into_bytes()),
         ];
 
         for (in_enc, in_data) in &data {

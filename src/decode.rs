@@ -17,7 +17,9 @@ pub fn decode(enc: &Encoding, data: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         Encoding::Raw => data.to_owned(),
         Encoding::ASCII => {
             if !data.is_ascii() {
-                bail!("Input data contains non-ASCII bytes, and therefore cannot be decoded as ASCII");
+                bail!(
+                    "Input data contains non-ASCII bytes, and therefore cannot be decoded as ASCII"
+                );
             }
 
             data.to_owned()
@@ -39,6 +41,15 @@ pub fn decode(enc: &Encoding, data: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         Encoding::Base64StandardNoPadding => base64::decode_config(&data, base64::STANDARD_NO_PAD)?,
         Encoding::Base64UrlSafe => base64::decode_config(&data, base64::URL_SAFE)?,
         Encoding::Base64UrlSafeNoPadding => base64::decode_config(&data, base64::URL_SAFE_NO_PAD)?,
+
+        Encoding::Base85Rfc1924 => match base85::decode(str::from_utf8(&data)?) {
+            Some(data) => data,
+            None => bail!("Failed to decode base85"),
+        },
+        Encoding::Base85Ascii => match ascii85::decode(str::from_utf8(&data)?) {
+            Ok(data) => data,
+            Err(e) => bail!("Failed to decode ascii85: {}", e),
+        },
     })
 }
 
@@ -116,6 +127,17 @@ mod test {
                 s,
             );
         }
+
+        t(
+            Encoding::Base85Rfc1924,
+            b"VQg%9Z*_8FVRL0+a%Ey=Y;SI7bZ>QY",
+            s,
+        );
+        t(
+            Encoding::Base85Ascii,
+            b"<~@;Kb*Dfp)0@<6!gEb/]kCi=3(FDl;C~>",
+            s,
+        );
 
         t(
             Encoding::Hex,
