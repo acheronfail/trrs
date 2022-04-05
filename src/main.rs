@@ -9,6 +9,8 @@ use anyhow::{bail, Result};
 use clap::Parser;
 use cli::{Args, OutputFormat};
 
+// TODO: use https://github.com/skyf0l/BaseCracker as a lib since it supports many encodings
+
 fn main() -> Result<()> {
     //
     // Args
