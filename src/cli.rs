@@ -1,10 +1,11 @@
 use std::str::FromStr;
 
 use clap::{crate_authors, crate_description, crate_version, ArgEnum, Parser};
+use strum::EnumIter;
 
 // TODO: rot13 & rotN
 // TODO: binary, octal
-#[derive(Debug, ArgEnum, Clone, PartialEq, Eq)]
+#[derive(Debug, ArgEnum, EnumIter, Clone, PartialEq, Eq)]
 pub enum Encoding {
     Raw,
     // Character encodings
@@ -173,22 +174,11 @@ mod tests {
     fn serde() {
         let t = |e: Encoding| assert_eq!(e, Encoding::from_str(&e.to_string()).unwrap());
 
-        // Test all long names
-        t(Encoding::Raw);
-        t(Encoding::ASCII);
-        t(Encoding::UTF8);
-        t(Encoding::Base32Crockford);
-        t(Encoding::Base32Rfc4648);
-        t(Encoding::Base32Rfc4648NoPadding);
-        t(Encoding::Base64Bcrypt);
-        t(Encoding::Base64Binhex);
-        t(Encoding::Base64Crypt);
-        t(Encoding::Base64ImapMutf7);
-        t(Encoding::Base64Standard);
-        t(Encoding::Base64StandardNoPadding);
-        t(Encoding::Base64UrlSafe);
-        t(Encoding::Base64UrlSafeNoPadding);
-        t(Encoding::Hex);
+        // Test all default names
+        use strum::IntoEnumIterator;
+        for enc in Encoding::iter() {
+            t(enc);
+        }
 
         // Test short names
         let t = |e: Encoding, s| assert_eq!(e, Encoding::from_str(s).unwrap());
