@@ -81,21 +81,11 @@ fn main() -> Result<()> {
                 }
             }
             Some(OutputFormat::Safe) => {
-                // TODO: use this instead when https://github.com/sharkdp/bat/pull/2142 is released
-                // bat::PrettyPrinter::new()
-                //     .input_from_bytes(&output)
-                //     .show_nonprintable(true)
-                //     .print()
-                //     .expect("Failed to print to STDOUT");
-
-                let mut config = bat::config::Config::default();
-                config.show_nonprintable = true;
-                let assets = bat::assets::HighlightingAssets::from_binary();
-                let bat = bat::controller::Controller::new(&config, &assets);
-                let input = vec![bat::input::Input::from(bat::Input::from_bytes(&output))];
-                if let Err(e) = bat.run(input) {
-                    bail!("Failed to print to STDOUT: {}", e);
-                }
+                bat::PrettyPrinter::new()
+                    .input_from_bytes(&output)
+                    .show_nonprintable(true)
+                    .print()
+                    .expect("Failed to print to STDOUT");
             }
         },
         // Write to file

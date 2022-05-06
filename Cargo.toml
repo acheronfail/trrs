@@ -16,7 +16,7 @@ ascii85 = "0.2.1"
 base32 = "0.4.0"
 base64 = "0.13.0"
 base85 = "1.1.0"
-bat = { version = "0.20.0", features = ["regex-fancy"] }
+bat = { git = "https://github.com/sharkdp/bat", rev = "ef3e398", features = ["regex-fancy"] }
 clap = { version = "3.0.0", features = ["cargo", "derive"] }
 hex = "0.4.3"
 strum = { version = "0.24.0", features = ["derive"] }
